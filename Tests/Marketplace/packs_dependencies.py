@@ -3,7 +3,8 @@ import json
 import argparse
 from Tests.Marketplace.upload_packs import PACKS_FULL_PATH, IGNORED_FILES, PACKS_FOLDER
 from Tests.Marketplace.marketplace_services import GCPConfig
-from demisto_sdk.commands.find_dependencies.find_dependencies import PackDependencies, parse_for_pack_metadata
+from demisto_sdk.commands.find_dependencies.find_dependencies import VerboseFile, PackDependencies,\
+    parse_for_pack_metadata
 from demisto_sdk.commands.common.tools import print_error, print_warning, print_color, LOG_COLORS
 
 
@@ -44,15 +45,20 @@ def main():
         print(f"Calculating {pack.name} pack dependencies.")
 
         try:
-            dependency_graph = PackDependencies.build_dependency_graph(pack_id=pack.name, id_set=id_set)
+            dependency_graph = PackDependencies.build_dependency_graph(pack_id=pack.name,
+                                                                       id_set=id_set,
+                                                                       verbose_file=VerboseFile(''),
+                                                                       )
             first_level_dependencies, all_level_dependencies = parse_for_pack_metadata(dependency_graph, pack.name)
+
         except Exception as e:
             print_error(f"Failed calculating {pack.name} pack dependencies. Additional info:\n{e}")
             continue
 
         pack_dependencies_result[pack.name] = {
             "dependencies": first_level_dependencies,
-            "displayedImages": all_level_dependencies,
+            "displayedImages": list(first_level_dependencies.keys()),
+            "allLevelDependencies": all_level_dependencies,
             "path": os.path.join(PACKS_FOLDER, pack.name),
             "fullPath": pack.path
         }

@@ -49,7 +49,7 @@ tasks:
     scriptarguments:
       limit: {}
       query:
-        simple: SELECT * FROM `firewall.traffic` limit 10
+        simple: SELECT * FROM `firewall.traffic`
     separatecontext: false
     view: |-
       {
@@ -106,11 +106,6 @@ tasks:
           left:
             value:
               simple: CDL.Logging.SourceIP
-            iscontext: true
-      - - operator: isExists
-          left:
-            value:
-              simple: CDL.Logging.CharacteristicOfApp
             iscontext: true
       - - operator: isExists
           left:
